@@ -1,0 +1,16 @@
+{
+    "name": "marcusvbda/zoop-sdk",
+    "license": "MIT",
+    "description": "",
+    "authors": [
+        {
+            "name": "Marcus Vinicius Bassalobre de Assis",
+            "email": "bassalobre.vinicius@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "marcusvbda\\vstack\\": "src/"
+        }
+    }
+}
