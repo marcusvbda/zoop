@@ -1,5 +1,5 @@
 {
-    "name": "marcusvbda/zoop-sdk",
+    "name": "marcusvbda/zoop",
     "license": "MIT",
     "description": "",
     "authors": [
@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "marcusvbda\\vstack\\": "src/"
+            "marcusvbda\\zoop\\": "src/"
         }
     }
 }
