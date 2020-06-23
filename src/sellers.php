@@ -4,80 +4,82 @@ namespace marcusvbda\zoop;
 
 class Sellers
 {
-    protected $client = null;
-    protected $api = null;
-    protected $route = null;
-
-    public function __construct()
+    public static function make()
     {
-        $this->client = new Client();
-        $this->api = $this->client->configuration['guzzle'];
-        $this->route = $this->client->configuration["api_version"] . '/marketplaces/' . $this->client->configuration['marketplace'];
+        $client = new Client();
+        $api = $client->configuration['guzzle'];
+        $route = $client->configuration["api_version"] . '/marketplaces/' . $client->configuration['marketplace'];
+        return (object) ["client" => $client, "api" => $api, "route" => $route];
     }
 
-    public function get()
+    public static function get()
     {
         try {
-            $route = $this->route . '/sellers';
-            $request = $this->api->get($route);
+            $_self = self::make();
+            $route = $_self->route . '/sellers';
+            $request = $_self->api->get($route);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $this->client->returnResponse($response);
+            return $_self->client->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->client->responseException($e);
+            return $_self->client->responseException($e);
         }
     }
 
-    public function find($id)
+    public static function find($id)
     {
         try {
-            $route = $this->route . '/sellers/' . $id;
-            $request = $this->api->get($route);
+            $_self = self::make();
+            $route = $_self->route . '/sellers/' . $id;
+            $request = $_self->api->get($route);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $this->client->returnResponse($response);
+            return $_self->client->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->client->responseException($e);
+            return $_self->client->responseException($e);
         }
     }
 
-    public function createIndividual($data)
+    public static function createIndividual($data)
     {
         try {
-            $route = $this->route . '/sellers/individuals';
-            $request = $this->api->post($route, [
+            $_self = self::make();
+            $route = $_self->route . '/sellers/individuals';
+            $request = $_self->api->post($route, [
                 'headers' => ['Content-Type' => 'application/json'],
                 'body' => json_encode($data)
             ]);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $this->client->returnResponse($response);
+            return $_self->client->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->client->responseException($e);
+            return $_self->client->responseException($e);
         }
     }
 
-    public function update($id, $data = [])
+    public static function update($id, $data = [])
     {
         try {
-            $route = $this->route . '/sellers/individuals/' . $id;
-            $request = $this->api->put($route, [
+            $_self = self::make();
+            $route = $_self->route . '/sellers/individuals/' . $id;
+            $request = $_self->api->put($route, [
                 'headers' => ['Content-Type' => 'application/json'],
                 'body' => json_encode($data)
             ]);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $this->client->returnResponse($response);
+            return $_self->client->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->client->responseException($e);
+            return $_self->client->responseException($e);
         }
     }
 
-    public function delete($id)
+    public static function delete($id)
     {
         try {
-            $route = $this->route . '/sellers/' . $id;
-            $request = $this->api->delete($route);
+            $_self = self::make();
+            $route = $_self->route . '/sellers/' . $id;
+            $request = $_self->api->delete($route);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $this->client->returnResponse($response);
+            return $_self->client->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->client->responseException($e);
+            return $_self->client->responseException($e);
         }
     }
 }
