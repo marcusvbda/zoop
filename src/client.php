@@ -18,6 +18,7 @@ class Client
     {
         $env = config("zoop.env");
         $config = config("zoop")[$env];
+        $token  = base64_encode((@$config["zpk"] ? @$config["zpk"] : '') . ':');
         $this->configuration = [
             'api_version' => config("zoop.version"),
             'marketplace' => @$config["marketplace_id"],
@@ -31,7 +32,7 @@ class Client
                 'base_uri' => $config["endpoint"],
                 'timeout' => 10,
                 'headers' => [
-                    'Authorization' => 'Basic ' . base64_encode((@$config["zpk"] ? @$config["zpk"] : '') . ':')
+                    'Authorization' => "Basic $token"
                 ]
             ])
         ];
@@ -43,5 +44,13 @@ class Client
             throw new \Exception($e->getMessage(), 1);
         }
         throw new \Exception(\json_encode(\json_decode($e->getResponse()->getBody()->getContents(), true)), 1);
+    }
+
+    public function returnResponse($response)
+    {
+        if ($response && is_array($response)) {
+            return $response;
+        }
+        return false;
     }
 }

@@ -15,17 +15,13 @@ class Sellers
         $this->route = $this->client->configuration["api_version"] . '/marketplaces/' . $this->client->configuration['marketplace'];
     }
 
-    public function get($id = null)
+    public function get()
     {
         try {
             $route = $this->route . '/sellers';
-            if ($id) $route .= "/" . $id;
-            $request = $this->api->request('GET', $route);
+            $request = $this->api->get($route);
             $response = json_decode($request->getBody()->getContents(), true);
-            if ($response && is_array($response)) {
-                return $response;
-            }
-            return false;
+            return $this->client->returnResponse($response);
         } catch (\Exception $e) {
             return $this->client->responseException($e);
         }
@@ -33,6 +29,55 @@ class Sellers
 
     public function find($id)
     {
-        return $this->get($id);
+        try {
+            $route = $this->route . '/sellers/' . $id;
+            $request = $this->api->get($route);
+            $response = json_decode($request->getBody()->getContents(), true);
+            return $this->client->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->client->responseException($e);
+        }
+    }
+
+    public function createIndividual($data)
+    {
+        try {
+            $route = $this->route . '/sellers/individuals';
+            $request = $this->api->post($route, [
+                'headers' => ['Content-Type' => 'application/json'],
+                'body' => json_encode($data)
+            ]);
+            $response = json_decode($request->getBody()->getContents(), true);
+            return $this->client->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->client->responseException($e);
+        }
+    }
+
+    public function update($id, $data = [])
+    {
+        try {
+            $route = $this->route . '/sellers/individuals/' . $id;
+            $request = $this->api->put($route, [
+                'headers' => ['Content-Type' => 'application/json'],
+                'body' => json_encode($data)
+            ]);
+            $response = json_decode($request->getBody()->getContents(), true);
+            return $this->client->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->client->responseException($e);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $route = $this->route . '/sellers/' . $id;
+            $request = $this->api->delete($route);
+            $response = json_decode($request->getBody()->getContents(), true);
+            return $this->client->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->client->responseException($e);
+        }
     }
 }
