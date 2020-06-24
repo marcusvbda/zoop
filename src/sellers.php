@@ -29,7 +29,7 @@ class Sellers
 
     public function transactions()
     {
-        return Transactions::seller($this->id)->get();
+        return new Transactions($this->id);
     }
 
     public function save()

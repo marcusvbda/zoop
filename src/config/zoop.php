@@ -2,6 +2,7 @@
 
 return [
     "env" => "homologation",
+    "currency" => "BRL",
     "version" => "v1",
     "homologation" => [
         "zpk" => "**************",
