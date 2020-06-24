@@ -2,8 +2,47 @@
 
 namespace marcusvbda\zoop;
 
+use marcusvbda\zoop\Transactions;
+
 class Sellers
 {
+    public function __construct($data)
+    {
+        foreach ($data as $key => $value)  $this->$key = $value;
+    }
+
+    public static function createIndividual($data)
+    {
+        try {
+            $_self = self::make();
+            $route = $_self->route . '/sellers/individuals';
+            $request = $_self->api->post($route, [
+                'headers' => ['Content-Type' => 'application/json'],
+                'body' => json_encode($data)
+            ]);
+            $response = json_decode($request->getBody()->getContents(), true);
+            return $_self->client->returnResponse($response);
+        } catch (\Exception $e) {
+            return $_self->client->responseException($e);
+        }
+    }
+
+    public function transactions()
+    {
+        return Transactions::seller($this->id)->get();
+    }
+
+    public function save()
+    {
+        return Sellers::update($this->id, (array) $this);
+    }
+
+    public function delete()
+    {
+        $result = Sellers::_delete($this->id);
+        return $result["deleted"];
+    }
+
     public static function make()
     {
         $client = new Client();
@@ -32,23 +71,8 @@ class Sellers
             $route = $_self->route . '/sellers/' . $id;
             $request = $_self->api->get($route);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $_self->client->returnResponse($response);
-        } catch (\Exception $e) {
-            return $_self->client->responseException($e);
-        }
-    }
-
-    public static function createIndividual($data)
-    {
-        try {
-            $_self = self::make();
-            $route = $_self->route . '/sellers/individuals';
-            $request = $_self->api->post($route, [
-                'headers' => ['Content-Type' => 'application/json'],
-                'body' => json_encode($data)
-            ]);
-            $response = json_decode($request->getBody()->getContents(), true);
-            return $_self->client->returnResponse($response);
+            $result =  $_self->client->returnResponse($response);
+            return new Sellers($result);
         } catch (\Exception $e) {
             return $_self->client->responseException($e);
         }
@@ -64,13 +88,14 @@ class Sellers
                 'body' => json_encode($data)
             ]);
             $response = json_decode($request->getBody()->getContents(), true);
-            return $_self->client->returnResponse($response);
+            $result =  $_self->client->returnResponse($response);
+            return new Sellers($result);
         } catch (\Exception $e) {
             return $_self->client->responseException($e);
         }
     }
 
-    public static function delete($id)
+    public static function _delete($id)
     {
         try {
             $_self = self::make();
