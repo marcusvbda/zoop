@@ -4,7 +4,7 @@ namespace marcusvbda\zoop;
 
 use Illuminate\Support\ServiceProvider;
 
-class zoopServiceProvider extends ServiceProvider
+class ZoopServiceProvider extends ServiceProvider
 {
     public function boot()
     {
