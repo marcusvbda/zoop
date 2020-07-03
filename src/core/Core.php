@@ -3,6 +3,7 @@
 namespace marcusvbda\zoop\core;
 
 use Error;
+use Exception;
 use GuzzleHttp\Client as  gClient;
 
 class Core
@@ -41,29 +42,39 @@ class Core
             'gateway' => 'zoop',
             'base_url' => $this->env_config["endpoint"],
             'auth' => [
-                'token' => (@$this->env_config["zpk"] ? @$this->env_config["zpk"] : "")
+                'token' => $this->getZPK()
             ],
         ];
     }
 
+    private function getAuthorization()
+    {
+        $token  = base64_encode($this->getZPK() . ':');
+        return "Basic $token";
+    }
+
     private function makeApi()
     {
-        $token  = base64_encode((@$this->env_config["zpk"] ? @$this->env_config["zpk"] : '') . ':');
+
         $this->api = new gClient([
             'base_uri' => $this->env_config["endpoint"],
             'timeout' => 10,
             'headers' => [
-                'Authorization' => "Basic $token"
+                'Authorization' => $this->getAuthorization()
             ]
         ]);
     }
 
     public function responseException($error, $isException = true)
     {
-        if ($isException) {
-            $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
+        try {
+            if ($isException) {
+                $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
+            }
+            return Errors::get(@$error);
+        } catch (\Exception $e) {
+            dd($error);
         }
-        return Errors::get(@$error);
     }
 
     public function returnResponse($response)
@@ -75,11 +86,66 @@ class Core
         return $response;
     }
 
-    public function makeRequestData($data = [])
+    public function makeRequestData($data = [], $content_type = 'GUZZLE')
     {
+        if ($content_type == "CURL") {
+            $data["file"] = new \CURLFile($data["file"], '', uniqid());
+            return $data;
+        }
+
         return [
             'headers' => ['Content-Type' => 'application/json'],
             'body' => json_encode($data)
         ];
+    }
+
+    private function getZPK()
+    {
+        return (@$this->env_config["zpk"] ? @$this->env_config["zpk"] : "");
+    }
+
+    public function requestWithCURL($method, $url, $data = [])
+    {
+        $headers = [
+            'Authorization' => $this->getAuthorization()
+        ];
+        $curl = curl_init();
+        $opts = array();
+
+        if (strtolower($method) == 'file') {
+            $opts[CURLOPT_POST] = 1;
+            $opts[CURLOPT_POSTFIELDS] = $data;
+        }
+
+        if (strtolower($method) == "post") {
+            $opts[CURLOPT_POST] = 1;
+            $opts[CURLOPT_POSTFIELDS] = http_build_query($data);
+        }
+
+        if (strtolower($method) == "delete") $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+
+        if (strtolower($method) == "put") {
+            $opts[CURLOPT_CUSTOMREQUEST] = 'PUT';
+            $opts[CURLOPT_POSTFIELDS] = http_build_query($data);
+        }
+
+        $opts[CURLOPT_URL] = $url;
+        $opts[CURLOPT_USERPWD] = $this->getZPK();
+        $opts[CURLOPT_RETURNTRANSFER] = true;
+        $opts[CURLOPT_CONNECTTIMEOUT] = 30;
+        $opts[CURLOPT_TIMEOUT] = 80;
+        $opts[CURLOPT_HTTPHEADER] = $headers;
+
+        $opts[CURLOPT_SSL_VERIFYHOST] = 2;
+        $opts[CURLOPT_SSL_VERIFYPEER] = false;
+
+        curl_setopt_array($curl, $opts);
+
+        $response_body = curl_exec($curl);
+        $response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        curl_close($curl);
+
+        return array($response_body, $response_code);
     }
 }

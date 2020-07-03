@@ -39,18 +39,9 @@ class Transaction extends Core
 
     public function create($data = [])
     {
-        $data["currency"] = config("zoop.currency");
-        $data["type"] = @$data["card"] ? "card" : "bankslip";
-        $data["usage"] = "single_use"; //ou reusable
-        $_data["source"] = $data;
-        $_data["amount"] = $data["amount"];
-        $_data["currency"] = $data["currency"];
-        $_data["description"] = "Venda";
-        $_data["on_behalf_of"] = $this->seller_id;
-        $_data["payment_type"] = $data["type"] == "card" ? "credit" : "bankslip";
         try {
             $route = $this->route . '/transactions';
-            $request = $this->api->post($route, $this->makeRequestData($_data));
+            $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {

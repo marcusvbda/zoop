@@ -13,7 +13,7 @@ class Errors
                 return (object) $error;
             }
         }
-        $_error->original = $_error;
+        $_error->original = json_decode(json_encode($_error));
         return $_error;
     }
 
