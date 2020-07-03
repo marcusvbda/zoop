@@ -60,7 +60,9 @@ class Core
 
     public function responseException($error, $isException = true)
     {
-        if ($isException) $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
+        if ($isException) {
+            $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
+        }
         return Errors::get(@$error);
     }
 
