@@ -38,6 +38,12 @@ class Seller extends Core
         }
     }
 
+    public static function StaticFind($id)
+    {
+        $seller = new Seller();
+        return $seller->find($id);
+    }
+
     public function find($id)
     {
         try {

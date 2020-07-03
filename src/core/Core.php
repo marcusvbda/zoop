@@ -67,14 +67,10 @@ class Core
 
     public function responseException($error, $isException = true)
     {
-        try {
-            if ($isException) {
-                $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
-            }
-            return Errors::get(@$error);
-        } catch (\Exception $e) {
-            dd($error);
+        if ($isException) {
+            $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
         }
+        return Errors::get(@$error);
     }
 
     public function returnResponse($response)
@@ -88,11 +84,13 @@ class Core
 
     public function makeRequestData($data = [], $content_type = 'GUZZLE')
     {
-        if ($content_type == "CURL") {
-            $data["file"] = new \CURLFile($data["file"], '', uniqid());
+        if ($content_type == "FILE") {
+            $extension = explode(".", $data["file"]);
+            $extension = "." . $extension[1];
+            $name =  uniqid() . $extension;
+            $data["file"] = new \CURLFile($data["file"], '', $name);
             return $data;
         }
-
         return [
             'headers' => ['Content-Type' => 'application/json'],
             'body' => json_encode($data)
@@ -126,7 +124,7 @@ class Core
 
         if (strtolower($method) == "put") {
             $opts[CURLOPT_CUSTOMREQUEST] = 'PUT';
-            $opts[CURLOPT_POSTFIELDS] = http_build_query($data);
+            $opts[CURLOPT_POSTFIELDS] = $data;
         }
 
         $opts[CURLOPT_URL] = $url;
