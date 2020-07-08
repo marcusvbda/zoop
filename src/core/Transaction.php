@@ -7,7 +7,7 @@ class Transaction extends Core
 {
     private $seller_id = null;
 
-    public function __construct($seller_id)
+    public function __construct($seller_id = null)
     {
         parent::__construct();
         $this->seller_id = $seller_id;
@@ -41,6 +41,18 @@ class Transaction extends Core
     {
         try {
             $route = $this->route . '/transactions';
+            $request = $this->api->post($route, $this->makeRequestData($data));
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function chargeback($transaction_id, $data = [])
+    {
+        try {
+            $route = $this->route . '/transactions/' . $transaction_id . '/void';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);

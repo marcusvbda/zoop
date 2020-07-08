@@ -115,18 +115,6 @@ class Core
             $opts[CURLOPT_POSTFIELDS] = $data;
         }
 
-        if (strtolower($method) == "post") {
-            $opts[CURLOPT_POST] = 1;
-            $opts[CURLOPT_POSTFIELDS] = http_build_query($data);
-        }
-
-        if (strtolower($method) == "delete") $opts[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-
-        if (strtolower($method) == "put") {
-            $opts[CURLOPT_CUSTOMREQUEST] = 'PUT';
-            $opts[CURLOPT_POSTFIELDS] = $data;
-        }
-
         $opts[CURLOPT_URL] = $url;
         $opts[CURLOPT_USERPWD] = $this->getZPK();
         $opts[CURLOPT_RETURNTRANSFER] = true;

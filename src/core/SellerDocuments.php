@@ -36,16 +36,4 @@ class SellerDocuments extends Core
             return $this->responseException($e);
         }
     }
-
-    public function update($id, $data = [])
-    {
-        try {
-            $route = $this->route . '/sellers/documents/' . $id;
-            $request = $this->api->put($route, $this->makeRequestData($data));
-            $response = (object) json_decode($request->getBody()->getContents(), true);
-            return $this->returnResponse($response);
-        } catch (\Exception $e) {
-            return $this->responseException($e);
-        }
-    }
 }
