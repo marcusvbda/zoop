@@ -3,52 +3,37 @@
 namespace marcusvbda\zoop\core;
 
 
-class Seller extends Core
+class Subscriptions extends Core
 {
-    public function create($data)
-    {
-        try {
-            if (@$data["taxpayer_id"]) { //pessoa física
-                $data["taxpayer_id"] = Helpers::sanitizeString($data["taxpayer_id"]);
-                $route = $this->route . '/sellers/individuals';
-            } else { //pessoa jurídica
-                if (@$data["ein"]) $data["ein"] = Helpers::sanitizeString($data["ein"]);
-                if (@$data["owner"]["taxpayer_id"]) {
-                    $data["owner"]["taxpayer_id"] = Helpers::sanitizeString($data["owner"]["taxpayer_id"]);
-                }
-                $route = $this->route . '/sellers/businesses';
-            }
-            $request = $this->api->post($route, $this->makeRequestData($data));
-            $response = (object) json_decode($request->getBody()->getContents(), true);
-            return $this->returnResponse($response);
-        } catch (\Exception $e) {
-            return $this->responseException($e);
-        }
-    }
-
     public function get($params = [])
     {
         try {
-            $route = $this->route . '/sellers?' . http_build_query($params);
+            $route = $this->route . '/subscriptions?' . http_build_query($params);
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
             return $this->responseException($e);
         }
-    }
-
-    public static function StaticFind($id)
-    {
-        $seller = new Seller();
-        return $seller->find($id);
     }
 
     public function find($id)
     {
         try {
-            $route = $this->route . '/sellers/' . $id;
+            $route = $this->route . '/subscriptions/' . $id;
             $request = $this->api->get($route);
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function create($data)
+    {
+        try {
+            $route = $this->route . '/subscriptions';
+            $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
@@ -59,7 +44,7 @@ class Seller extends Core
     public function delete($id)
     {
         try {
-            $route = $this->route . '/sellers/' . $id;
+            $route = $this->route . '/subscriptions/' . $id;
             $request = $this->api->delete($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
@@ -71,8 +56,7 @@ class Seller extends Core
     public function update($id, $data = [])
     {
         try {
-            $seller = $this->find($id);
-            $route = $this->route . '/sellers/' . (($seller->type == "business") ? 'businesses/' : 'individuals/') . $id;
+            $route = $this->route . '/subscriptions/' . $id;
             $request = $this->api->put($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
@@ -81,11 +65,23 @@ class Seller extends Core
         }
     }
 
-    public function getBalance($seller_id, $params = [])
+    public function suspend($id)
     {
         try {
-            $route = $this->route . '/sellers/' . $seller_id . '?' . http_build_query($params);
-            $request = $this->api->get($route);
+            $route = $this->route . '/subscriptions/' . $id . '/suspend';
+            $request = $this->api->post($route);
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function reactivate($id)
+    {
+        try {
+            $route = $this->route . '/subscriptions/' . $id . '/activate';
+            $request = $this->api->post($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {

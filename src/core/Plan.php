@@ -3,12 +3,12 @@
 namespace marcusvbda\zoop\core;
 
 
-class Card extends Core
+class Plan extends Core
 {
-    public function find($id)
+    public function get($params = [])
     {
         try {
-            $route = $this->route . '/tokens/' . $id;
+            $route = $this->route . '/plans?' . http_build_query($params);
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
@@ -17,10 +17,22 @@ class Card extends Core
         }
     }
 
-    public function createToken($data = [])
+    public function find($id)
     {
         try {
-            $route = $this->route . '/cards/tokens';
+            $route = $this->route . '/plans/' . $id;
+            $request = $this->api->get($route);
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function create($data)
+    {
+        try {
+            $route = $this->route . '/plans';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
@@ -32,20 +44,8 @@ class Card extends Core
     public function delete($id)
     {
         try {
-            $route = $this->route . '/cards/' . $id;
+            $route = $this->route . '/plans/' . $id;
             $request = $this->api->delete($route);
-            $response = (object) json_decode($request->getBody()->getContents(), true);
-            return $this->returnResponse($response);
-        } catch (\Exception $e) {
-            return $this->responseException($e);
-        }
-    }
-
-    public function associateToBuyer($data)
-    {
-        try {
-            $route = $this->route . '/cards';
-            $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {

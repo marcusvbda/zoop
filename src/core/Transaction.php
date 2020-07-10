@@ -60,4 +60,40 @@ class Transaction extends Core
             return $this->responseException($e);
         }
     }
+
+    public function createSplitRule($transaction_id, $data = [])
+    {
+        try {
+            $route = $this->route . '/transactions/' . $transaction_id . '/split_rules';
+            $request = $this->api->post($route, $this->makeRequestData($data));
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function getSplitRules($transaction_id, $id)
+    {
+        try {
+            $route = $this->route . '/transactions/' . $transaction_id . '/split_rules/' . $id;
+            $request = $this->api->get($route);
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function deleteSplitRules($transaction_id, $id)
+    {
+        try {
+            $route = $this->route . '/transactions/' . $transaction_id . '/split_rules/' . $id;
+            $request = $this->api->delete($route);
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
 }

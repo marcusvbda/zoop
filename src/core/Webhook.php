@@ -3,12 +3,24 @@
 namespace marcusvbda\zoop\core;
 
 
-class Card extends Core
+class Webhook extends Core
 {
-    public function find($id)
+    public function create($data)
     {
         try {
-            $route = $this->route . '/tokens/' . $id;
+            $route = $this->route . '/webhooks';
+            $request = $this->api->post($route, $this->makeRequestData($data));
+            $response = (object) json_decode($request->getBody()->getContents(), true);
+            return $this->returnResponse($response);
+        } catch (\Exception $e) {
+            return $this->responseException($e);
+        }
+    }
+
+    public function get($params = [])
+    {
+        try {
+            $route = $this->route . '/webhooks?' . http_build_query($params);
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
@@ -17,11 +29,11 @@ class Card extends Core
         }
     }
 
-    public function createToken($data = [])
+    public function find($id)
     {
         try {
-            $route = $this->route . '/cards/tokens';
-            $request = $this->api->post($route, $this->makeRequestData($data));
+            $route = $this->route . '/webhooks/' . $id;
+            $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
@@ -32,20 +44,8 @@ class Card extends Core
     public function delete($id)
     {
         try {
-            $route = $this->route . '/cards/' . $id;
+            $route = $this->route . '/buyers/' . $id;
             $request = $this->api->delete($route);
-            $response = (object) json_decode($request->getBody()->getContents(), true);
-            return $this->returnResponse($response);
-        } catch (\Exception $e) {
-            return $this->responseException($e);
-        }
-    }
-
-    public function associateToBuyer($data)
-    {
-        try {
-            $route = $this->route . '/cards';
-            $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
