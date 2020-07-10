@@ -44,7 +44,7 @@ class Webhook extends Core
     public function delete($id)
     {
         try {
-            $route = $this->route . '/buyers/' . $id;
+            $route = $this->route . '/webhooks/' . $id;
             $request = $this->api->delete($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
