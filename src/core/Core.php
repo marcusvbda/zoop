@@ -26,7 +26,13 @@ class Core
     {
         $env = config("zoop.env");
         $this->env_config = config("zoop")[$env];
-        $this->api_version = config("zoop")["version"];
+    }
+
+    public function setVersion($version)
+    {
+        $this->api_version = $version;
+        $this->route = $this->env_config["endpoint"] . "/" . $this->api_version . "/marketplaces/" . $this->env_config["marketplace_id"];
+        $this->configuration["api_version"] = $version;
     }
 
     private function makeRoute()
@@ -36,14 +42,12 @@ class Core
 
     private function makeConfiguration()
     {
-        $this->configuration = [
-            'api_version' => $this->api_version,
-            'marketplace' => @$this->env_config["marketplace_id"],
-            'gateway' => 'zoop',
-            'base_url' => $this->env_config["endpoint"],
-            'auth' => [
-                'token' => $this->getZPK()
-            ],
+        $this->configuration["api_version"] = $this->api_version;
+        $this->configuration["marketplace"] = @$this->env_config["marketplace_id"];
+        $this->configuration["gateway"] = 'zoop';
+        $this->configuration["base_url"] = $this->env_config["endpoint"];
+        $this->configuration["auth"] = [
+            'token' => $this->getZPK()
         ];
     }
 

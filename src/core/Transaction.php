@@ -16,6 +16,7 @@ class Transaction extends Core
     public function get($params = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/sellers/' . $this->seller_id . '/transactions?' . http_build_query($params);
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -28,6 +29,7 @@ class Transaction extends Core
     public function find($id)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions/' . $id;
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -40,6 +42,7 @@ class Transaction extends Core
     public function create($data = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -52,6 +55,7 @@ class Transaction extends Core
     public function chargeback($transaction_id, $data = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions/' . $transaction_id . '/void';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -64,6 +68,7 @@ class Transaction extends Core
     public function createSplitRule($transaction_id, $data = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions/' . $transaction_id . '/split_rules';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -76,6 +81,7 @@ class Transaction extends Core
     public function getSplitRules($transaction_id, $id)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions/' . $transaction_id . '/split_rules/' . $id;
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -88,6 +94,7 @@ class Transaction extends Core
     public function deleteSplitRules($transaction_id, $id)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/transactions/' . $transaction_id . '/split_rules/' . $id;
             $request = $this->api->delete($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);

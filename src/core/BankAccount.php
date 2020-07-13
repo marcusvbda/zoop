@@ -8,6 +8,7 @@ class BankAccount extends Core
     public function get($params = [])
     {
         try {
+            $this->setVersion("v1");
             $seller_id = @$params["seller_id"];
             if ($seller_id) $route = $this->route . '/sellers/' . $seller_id . '/bank_accounts?' . http_build_query($params);
             else $route = $this->route . '/bank_accounts?' . http_build_query($params);
@@ -22,6 +23,7 @@ class BankAccount extends Core
     public function find($id)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts/' . $id;
             $request = $this->api->get($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -34,6 +36,7 @@ class BankAccount extends Core
     public function create($data)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -46,6 +49,7 @@ class BankAccount extends Core
     public function delete($id)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts/' . $id;
             $request = $this->api->delete($route);
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -58,6 +62,7 @@ class BankAccount extends Core
     public function update($id, $data = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts/' . $id;
             $request = $this->api->put($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -70,6 +75,7 @@ class BankAccount extends Core
     public function createToken($data = [])
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts/tokens';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
@@ -82,6 +88,7 @@ class BankAccount extends Core
     public function associateToSeller($data)
     {
         try {
+            $this->setVersion("v1");
             $route = $this->route . '/bank_accounts';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
