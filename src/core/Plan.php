@@ -5,7 +5,15 @@ namespace marcusvbda\zoop\core;
 
 class Plan extends Core
 {
-    public function get($params = [])
+
+    public static function create($data)
+    {
+        $ob = new Plan();
+        $data["payment_methods"] = ["credit"];
+        return $ob->_create($data);
+    }
+
+    public function _get($params = [])
     {
         try {
             $this->setVersion("v2");
@@ -18,7 +26,7 @@ class Plan extends Core
         }
     }
 
-    public function find($id)
+    public function _find($id)
     {
         try {
             $this->setVersion("v2");
@@ -31,7 +39,8 @@ class Plan extends Core
         }
     }
 
-    public function create($data)
+
+    public function _create($data = [])
     {
         try {
             $this->setVersion("v2");
@@ -40,11 +49,30 @@ class Plan extends Core
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->responseException($e);
+            return $this->responseException($e, true);
         }
     }
 
-    public function delete($id)
+    public static function get($params = [])
+    {
+        $params = Helpers::makeGetParams($params);
+        $ob = new Plan();
+        return $ob->_get($params);
+    }
+
+    public static function find($id)
+    {
+        $ob = new Plan();
+        return $ob->_find($id);
+    }
+
+    public static function delete($id)
+    {
+        $ob = new Plan();
+        return $ob->_delete($id);
+    }
+
+    public function _delete($id)
     {
         try {
             $this->setVersion("v2");
@@ -53,7 +81,7 @@ class Plan extends Core
             $response = (object) json_decode($request->getBody()->getContents(), true);
             return $this->returnResponse($response);
         } catch (\Exception $e) {
-            return $this->responseException($e);
+            return $this->responseException($e, true);
         }
     }
 }

@@ -39,14 +39,48 @@ class Transaction extends Core
         }
     }
 
-    public function create($data = [])
+    private function createBuyer($data)
+    {
+        $buyer = new Buyer();
+        $buyer = $buyer->create($data["buyer"]);
+        unset($data["buyer"]);
+        $data["customer"] = $buyer->id;
+        return $data;
+    }
+
+    private function createTokenAndAssociateToBuyer($data)
+    {
+        $data = $this->createBuyer($data);
+        if ($data["credit_card"]) {
+            $card = new Card();
+            $_card = $card->createToken($data["credit_card"]);
+            $card->associateToBuyer([
+                "token" => $_card->id,
+                "customer" => $data["customer"],
+            ]);
+            $data["credit_card"] = $_card;
+            unset($data["credit_card"]);
+        }
+        return $data;
+    }
+
+    private function createTransactionSplit($transaction, $data)
+    {
+        if (@$data["split"]) return $this->createSplitRule($transaction->id, $data["split"]);
+    }
+
+    public function create($seller_id = null, $data = [])
     {
         try {
             $this->setVersion("v1");
+            $data["payment_type"] = "credit";
+            if (@!$data["customer"]) $data = $this->createTokenAndAssociateToBuyer($data);
             $route = $this->route . '/transactions';
             $request = $this->api->post($route, $this->makeRequestData($data));
             $response = (object) json_decode($request->getBody()->getContents(), true);
-            return $this->returnResponse($response);
+            $response =  $this->returnResponse($response);
+            $data = $this->createTransactionSplit($response, $data);
+            return $response;
         } catch (\Exception $e) {
             return $this->responseException($e);
         }

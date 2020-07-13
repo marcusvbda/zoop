@@ -7,13 +7,14 @@ class Errors
 {
     public static function get($_error)
     {
+        if (is_array($_error)) $_error = (object) $_error;
         foreach (self::list() as $error) {
             if (($error["status_code"] == @$_error->status_code) && ($error["category"] == @$_error->category) && ($error["type"] == @$_error->type)) {
                 $error["original"] = $_error;
                 return (object) $error;
             }
         }
-        $_error->original = json_decode(json_encode($_error));
+        $_error->original = json_decode(json_encode(@$_error ? $_error : []));
         return $_error;
     }
 

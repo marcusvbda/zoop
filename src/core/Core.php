@@ -12,6 +12,7 @@ class Core
     public $api_version = "v1";
     public $api = null;
     public $env_config = [];
+    public $complete_env = [];
     public $configuration = [];
 
     public function __construct()
@@ -24,8 +25,8 @@ class Core
 
     private function makeEnvConfig()
     {
-        $env = config("zoop.env");
-        $this->env_config = config("zoop")[$env];
+        $this->complete_env = config("zoop");
+        $this->env_config = config("zoop")[$this->complete_env['env']];
     }
 
     public function setVersion($version)
@@ -72,7 +73,9 @@ class Core
     public function responseException($error, $isException = true)
     {
         if ($isException) {
+            $_error = $error;
             $error = @json_decode($error->getResponse()->getBody()->getContents())->error;
+            if (!$error) $error = ["message" => $_error->getMessage(), "status_code" => $_error->getCode()];
         }
         return Errors::get(@$error);
     }
